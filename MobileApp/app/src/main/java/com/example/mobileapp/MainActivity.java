@@ -2,6 +2,8 @@ package com.example.mobileapp;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,14 +21,18 @@ import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     private final OkHttpClient client = new OkHttpClient();
     private PieChart humidityPieChart;
     private Timer timer;
+    private SeekBar humiditySeekBar;
+    private TextView desiredHumidityLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +40,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         humidityPieChart = findViewById(R.id.humidityPieChart);
+        humiditySeekBar = findViewById(R.id.humiditySeekBar);
+        desiredHumidityLabel = findViewById(R.id.desiredHumidityLabel);
         setupPieChart();
+        setupSeekBar();
+        fetchDesiredHumidity();
         startTimer();
     }
 
@@ -66,6 +76,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 0, 3000);
     }
+    private void setupSeekBar() {
+        humiditySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                desiredHumidityLabel.setText("Заданная влажность: " + progress + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
     private void setupPieChart() {
         humidityPieChart.getDescription().setEnabled(false);
         humidityPieChart.setRotationEnabled(false);
@@ -93,6 +119,37 @@ public class MainActivity extends AppCompatActivity {
         entries.add(new PieEntry(remainingHumidity, ""));
         return entries;
     }
+
+    private void fetchDesiredHumidity() {
+        String url = "http://26.102.70.137:5000/getDesiredHumidity/";
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    Gson gson = new Gson();
+                    HumidityResponse desiredHumidityResponse = gson.fromJson(responseBody, HumidityResponse.class);
+                    final int desiredHumidity = desiredHumidityResponse.getHumidity();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            humiditySeekBar.setProgress(desiredHumidity);
+                            desiredHumidityLabel.setText("Заданная влажность: " + desiredHumidity + "%");
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     private void GetCurrentHumidity() {
         String url = "http://26.102.70.137:5000/getCurrentHumidity/";
         Request request = new Request.Builder()
