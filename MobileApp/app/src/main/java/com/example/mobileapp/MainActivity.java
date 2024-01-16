@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                sendChangeHumidityRequest(String.valueOf(seekBar.getProgress()));
             }
         });
     }
@@ -146,6 +147,27 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
+            }
+        });
+    }
+
+    private void sendChangeHumidityRequest(String desiredHumidity) {
+        String url = "http://26.102.70.137:5000/sendDesiredHumidity/" + desiredHumidity;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("humidity", desiredHumidity)
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
             }
         });
     }
