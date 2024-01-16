@@ -11,8 +11,9 @@
 Это позволяет управлять процессом и просматривать его статус командами sytemctl. А ткже просматривать его логи командой journalctl -u humiditySensorServer.service.
 <p align="center">
   <![image](https://raw.githubusercontent.com/VladMexon/Rabota/Server/Server/Screenshots/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202024-01-16%20212027.png)>
-  <p align="center">
-  <![image](https://raw.githubusercontent.com/VladMexon/Rabota/Server/Server/Screenshots/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202024-01-16%20212214.png)>
+</p>
+<p align="center">
+<![image](https://raw.githubusercontent.com/VladMexon/Rabota/Server/Server/Screenshots/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202024-01-16%20212214.png)>
 </p>
 ## Мобильная часть
 ...
